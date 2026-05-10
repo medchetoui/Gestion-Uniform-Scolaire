@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Uniforme
+from .models import Uniforme, Categorie, Fournisseur
 
 # ==========================================
 # FORMULAIRE : UniformeForm
@@ -12,15 +12,43 @@ class UniformeForm(forms.ModelForm):
     class Meta:
         model = Uniforme
         # On définit les champs qui seront modifiables par l'utilisateur
-        fields = ['type_tenue', 'taille', 'couleur', 'quantite', 'categorie', 'fournisseur']
+        fields = ['nom', 'type_tenue', 'taille', 'couleur', 'quantite', 'prix', 'image', 'categorie', 'fournisseur']
         
-        # On peut ajouter des widgets pour personnaliser l'apparence si besoin,
-        # mais Crispy Forms s'occupera du gros du travail de design.
+        # Widgets pour personnaliser l'apparence des champs du formulaire
         widgets = {
+            'nom': forms.TextInput(attrs={'placeholder': 'Ex: Chemise blanche cérémonie'}),
             'type_tenue': forms.Select(attrs={'class': 'form-select'}),
             'taille': forms.TextInput(attrs={'placeholder': 'Ex: M, L ou 10 ans'}),
             'couleur': forms.TextInput(attrs={'placeholder': 'Ex: Bleu Marine'}),
             'quantite': forms.NumberInput(attrs={'min': 0}),
+            'prix': forms.NumberInput(attrs={'min': 0, 'step': '0.01', 'placeholder': 'Ex: 150.00'}),
+        }
+
+# ==========================================
+# FORMULAIRE : CategorieForm
+# ==========================================
+# Formulaire pour créer ou modifier une catégorie d'uniformes.
+class CategorieForm(forms.ModelForm):
+    class Meta:
+        model = Categorie
+        fields = ['libelle', 'niveau_scolaire']
+        widgets = {
+            'libelle': forms.TextInput(attrs={'placeholder': 'Ex: Tenue de sport'}),
+            'niveau_scolaire': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+# ==========================================
+# FORMULAIRE : FournisseurForm
+# ==========================================
+# Formulaire pour créer ou modifier un fournisseur.
+class FournisseurForm(forms.ModelForm):
+    class Meta:
+        model = Fournisseur
+        fields = ['nom_societe', 'contact', 'delai_livraison']
+        widgets = {
+            'nom_societe': forms.TextInput(attrs={'placeholder': 'Ex: TextilePro SARL'}),
+            'contact': forms.TextInput(attrs={'placeholder': 'Ex: contact@textilepro.ma'}),
+            'delai_livraison': forms.NumberInput(attrs={'min': 1, 'placeholder': 'Ex: 15'}),
         }
 
 # ==========================================
@@ -38,4 +66,3 @@ class SimpleSignUpForm(UserCreationForm):
         # On supprime les textes d'aide par défaut pour rendre l'interface plus propre
         if 'username' in self.fields:
             self.fields['username'].help_text = None
-

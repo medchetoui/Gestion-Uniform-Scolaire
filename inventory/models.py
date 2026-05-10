@@ -63,6 +63,9 @@ class Uniforme(models.Model):
         ('Survêtement', 'Survêtement'),
     ]
 
+    # Nom descriptif de l'uniforme (ex: "Chemise blanche cérémonie")
+    nom = models.CharField(max_length=200, verbose_name="Nom de l'uniforme", default="Uniforme")
+
     # Le type du vêtement
     type_tenue = models.CharField(max_length=50, choices=TYPE_CHOICES, verbose_name="Type de tenue")
     
@@ -75,6 +78,15 @@ class Uniforme(models.Model):
     # La quantité actuellement en stock. 
     # Un entier positif ou nul (pas de stock négatif).
     quantite = models.PositiveIntegerField(default=0, verbose_name="Quantité en stock")
+
+    # Le prix unitaire de l'uniforme en dirhams (MAD)
+    prix = models.DecimalField(max_digits=8, decimal_places=2, default=0, verbose_name="Prix unitaire (MAD)")
+
+    # Image du produit (optionnelle). Les images seront stockées dans le dossier media/uniformes/
+    image = models.ImageField(upload_to='uniformes/', blank=True, null=True, verbose_name="Photo du produit")
+
+    # Date de création automatique pour trier par "derniers ajoutés"
+    date_ajout = models.DateTimeField(auto_now_add=True, verbose_name="Date d'ajout")
     
     # Clé étrangère vers le modèle Categorie : un uniforme appartient à une seule catégorie, 
     # mais une catégorie peut avoir plusieurs uniformes.
@@ -85,7 +97,7 @@ class Uniforme(models.Model):
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.SET_NULL, null=True, blank=True, related_name="uniformes", verbose_name="Fournisseur")
 
     def __str__(self):
-        return f"{self.type_tenue} - {self.couleur} (Taille: {self.taille})"
+        return f"{self.nom} - {self.type_tenue} ({self.taille})"
 
     # Propriété calculée pour savoir si le stock est faible (ex: moins de 10)
     @property
@@ -96,3 +108,8 @@ class Uniforme(models.Model):
     @property
     def est_rupture(self):
         return self.quantite == 0
+
+    class Meta:
+        ordering = ['-date_ajout']  # Les plus récents en premier
+        verbose_name = "Uniforme"
+        verbose_name_plural = "Uniformes"

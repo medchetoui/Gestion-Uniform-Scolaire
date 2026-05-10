@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Fournisseurs — SchoolUniforms{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Fournisseurs</h2>
+        <p class="text-muted mb-0">Gérez vos partenaires et sources d'approvisionnement.</p>
+    </div>
+    <a href="{% url 'fournisseur_create' %}" class="btn btn-primary rounded-pill">
+        <i class="fas fa-plus me-1"></i> Nouveau Fournisseur
+    </a>
+</div>
+
+{% if fournisseurs %}
+<div class="row g-4">
+    {% for f in fournisseurs %}
+    <div class="col-sm-6 col-lg-4">
+        <div class="card h-100 p-4">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="stat-icon bg-sky-light">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light rounded-circle" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li><a class="dropdown-item" href="{% url 'fournisseur_update' f.pk %}"><i class="fas fa-edit me-2 text-primary"></i>Modifier</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'fournisseur_delete' f.pk %}"><i class="fas fa-trash me-2"></i>Supprimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <h5 class="fw-bold mb-1">{{ f.nom_societe }}</h5>
+            <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i> {{ f.contact }}</p>
+            <p class="text-muted small mb-3"><i class="fas fa-clock me-1"></i> Délai : {{ f.delai_livraison }} jours</p>
+            <div class="mt-auto pt-2 border-top">
+                <span class="text-muted small"><i class="fas fa-tshirt me-1"></i> {{ f.uniformes.count }} produit{{ f.uniformes.count|pluralize }}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="card p-5 mx-auto" style="max-width: 500px;">
+        <i class="fas fa-truck fa-3x text-muted mb-3"></i>
+        <h5 class="fw-bold">Aucun fournisseur</h5>
+        <p class="text-muted">Ajoutez votre premier fournisseur pour gérer les approvisionnements.</p>
+        <a href="{% url 'fournisseur_create' %}" class="btn btn-primary rounded-pill mx-auto" style="width: fit-content;">
+            <i class="fas fa-plus me-1"></i> Ajouter un fournisseur
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

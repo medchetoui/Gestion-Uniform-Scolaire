@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 from inventory import views
 
 # ==========================================
@@ -14,11 +16,16 @@ urlpatterns = [
     path('', include('inventory.urls')),
     
     # Authentification (Login / Logout)
-    # Django fournit des vues prêtes à l'emploi. 
-    # Nous devons juste créer les templates correspondants.
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     
     # Inscription
     path('signup/', views.SignUpView.as_view(), name='signup'),
 ]
+
+# En mode développement, Django sert aussi les fichiers média (images uploadées)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Page 404 personnalisée (active uniquement quand DEBUG=False)
+handler404 = 'inventory.views.handler404_view'

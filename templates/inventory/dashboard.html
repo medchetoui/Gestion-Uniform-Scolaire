@@ -1,132 +1,186 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - SchoolUniforms{% endblock %}
+{% block title %}Dashboard — SchoolUniforms{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
         <h2 class="fw-bold mb-0">Tableau de Bord</h2>
-        <p class="text-muted">Vue d'ensemble de l'inventaire des uniformes scolaires.</p>
+        <p class="text-muted mb-0">Vue d'ensemble de l'inventaire des uniformes scolaires.</p>
     </div>
+    <a href="{% url 'uniform_create' %}" class="btn btn-primary rounded-pill">
+        <i class="fas fa-plus me-1"></i> Nouvel Uniforme
+    </a>
 </div>
 
 <!-- Statistiques Clés -->
-<div class="row g-4 mb-5">
-    <div class="col-md-3">
-        <div class="card h-100 border-0 p-3">
-            <div class="stat-icon bg-indigo-light">
-                <i class="fas fa-tshirt"></i>
+<div class="row g-4 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-indigo-light me-3">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0 small">Total Uniformes</p>
+                    <h3 class="fw-bold mb-0">{{ total_uniformes }}</h3>
+                </div>
             </div>
-            <h6 class="text-muted mb-1">Total Types</h6>
-            <h2 class="fw-bold mb-0">{{ total_uniformes }}</h2>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card h-100 border-0 p-3">
-            <div class="stat-icon bg-sky-light">
-                <i class="fas fa-boxes"></i>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-sky-light me-3">
+                    <i class="fas fa-boxes-stacked"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0 small">Quantité Totale</p>
+                    <h3 class="fw-bold mb-0">{{ quantite_totale }}</h3>
+                </div>
             </div>
-            <h6 class="text-muted mb-1">Quantité Totale</h6>
-            <h2 class="fw-bold mb-0">{{ quantite_totale }}</h2>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card h-100 border-0 p-3">
-            <div class="stat-icon bg-amber-light">
-                <i class="fas fa-tags"></i>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-amber-light me-3">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0 small">Catégories</p>
+                    <h3 class="fw-bold mb-0">{{ total_categories }}</h3>
+                </div>
             </div>
-            <h6 class="text-muted mb-1">Catégories</h6>
-            <h2 class="fw-bold mb-0">{{ total_categories }}</h2>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card h-100 border-0 p-3">
-            <div class="stat-icon bg-rose-light">
-                <i class="fas fa-truck-loading"></i>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-rose-light me-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0 small">En Rupture</p>
+                    <h3 class="fw-bold mb-0">{{ total_ruptures }}</h3>
+                </div>
             </div>
-            <h6 class="text-muted mb-1">Fournisseurs</h6>
-            <h2 class="fw-bold mb-0">{{ total_fournisseurs }}</h2>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <!-- Section Alertes Stock Faible -->
-    <div class="col-md-6">
-        <div class="card border-0 h-100">
-            <div class="card-header bg-white border-0 pt-4 px-4">
-                <h5 class="fw-bold text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Stock Faible (< 10)</h5>
+<div class="row g-4 mb-4">
+    <!-- Derniers Uniformes Ajoutés -->
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0"><i class="fas fa-clock text-primary me-2"></i>Derniers Ajoutés</h5>
+                <a href="{% url 'uniform_list' %}" class="btn btn-sm btn-outline-primary rounded-pill">Tout voir</a>
             </div>
             <div class="card-body px-4">
-                {% if stock_faible %}
+                {% if derniers_uniformes %}
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
                                 <th>Uniforme</th>
-                                <th>Qté</th>
-                                <th>Action</th>
+                                <th>Catégorie</th>
+                                <th>Prix</th>
+                                <th>Stock</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for item in stock_faible %}
+                            {% for item in derniers_uniformes %}
                             <tr>
                                 <td>
-                                    <span class="fw-semibold">{{ item.type_tenue }}</span><br>
-                                    <small class="text-muted">{{ item.taille }} - {{ item.couleur }}</small>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="" width="40" height="40" class="rounded me-3" style="object-fit:cover;">
+                                        {% else %}
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
+                                            <i class="fas fa-tshirt text-muted"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <span class="fw-semibold">{{ item.nom }}</span><br>
+                                            <small class="text-muted">{{ item.taille }} · {{ item.couleur }}</small>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td><span class="badge bg-warning text-dark">{{ item.quantite }}</span></td>
-                                <td><a href="{% url 'uniform_update' item.pk %}" class="btn btn-sm btn-outline-primary rounded-pill">Ajuster</a></td>
+                                <td><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ item.categorie.libelle }}</span></td>
+                                <td class="fw-bold">{{ item.prix }} MAD</td>
+                                <td>
+                                    {% if item.est_rupture %}
+                                        <span class="badge bg-danger badge-stock">Rupture</span>
+                                    {% elif item.est_stock_faible %}
+                                        <span class="badge bg-warning text-dark badge-stock">{{ item.quantite }}</span>
+                                    {% else %}
+                                        <span class="badge bg-success badge-stock">{{ item.quantite }}</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
                 {% else %}
-                <div class="text-center py-4">
-                    <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
-                    <p class="mb-0">Aucun stock faible détecté.</p>
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox text-muted fs-1 mb-3"></i>
+                    <p class="text-muted">Aucun uniforme enregistré pour le moment.</p>
+                    <a href="{% url 'uniform_create' %}" class="btn btn-primary rounded-pill">Ajouter le premier</a>
                 </div>
                 {% endif %}
             </div>
         </div>
     </div>
 
-    <!-- Section Rupture de Stock -->
-    <div class="col-md-6">
-        <div class="card border-0 h-100">
+    <!-- Panneau latéral : Alertes -->
+    <div class="col-lg-4">
+        <!-- Stock Faible -->
+        <div class="card mb-4">
             <div class="card-header bg-white border-0 pt-4 px-4">
-                <h5 class="fw-bold text-danger"><i class="fas fa-times-circle me-2"></i>Rupture de Stock</h5>
+                <h6 class="fw-bold text-warning mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Stock Faible (< 10)</h6>
             </div>
-            <div class="card-body px-4">
-                {% if rupture_stock %}
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Uniforme</th>
-                                <th>Catégorie</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in rupture_stock %}
-                            <tr>
-                                <td>
-                                    <span class="fw-semibold">{{ item.type_tenue }}</span><br>
-                                    <small class="text-muted">{{ item.taille }} - {{ item.couleur }}</small>
-                                </td>
-                                <td>{{ item.categorie.libelle }}</td>
-                                <td><a href="{% url 'uniform_update' item.pk %}" class="btn btn-sm btn-primary rounded-pill">Réappro</a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body px-4 pt-2">
+                {% if stock_faible %}
+                    {% for item in stock_faible %}
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <div>
+                            <span class="fw-semibold small">{{ item.nom }}</span><br>
+                            <small class="text-muted">{{ item.taille }} · {{ item.couleur }}</small>
+                        </div>
+                        <span class="badge bg-warning text-dark">{{ item.quantite }}</span>
+                    </div>
+                    {% endfor %}
                 {% else %}
-                <div class="text-center py-4">
-                    <i class="fas fa-smile text-primary fs-1 mb-3"></i>
-                    <p class="mb-0">Aucune rupture de stock.</p>
+                <div class="text-center py-3">
+                    <i class="fas fa-check-circle text-success mb-2"></i>
+                    <p class="mb-0 small text-muted">Aucun stock faible.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Rupture de stock -->
+        <div class="card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h6 class="fw-bold text-danger mb-0"><i class="fas fa-times-circle me-2"></i>Rupture de Stock</h6>
+            </div>
+            <div class="card-body px-4 pt-2">
+                {% if rupture_stock %}
+                    {% for item in rupture_stock %}
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <div>
+                            <span class="fw-semibold small">{{ item.nom }}</span><br>
+                            <small class="text-muted">{{ item.categorie.libelle }}</small>
+                        </div>
+                        <a href="{% url 'uniform_update' item.pk %}" class="btn btn-sm btn-outline-danger rounded-pill">Réappro</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-smile text-success mb-2"></i>
+                    <p class="mb-0 small text-muted">Aucune rupture.</p>
                 </div>
                 {% endif %}
             </div>

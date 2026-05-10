@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SchoolUniforms — Gestion des Uniformes Scolaires{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center py-5" style="min-height: 75vh;">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-3">
+            <i class="fas fa-star me-1"></i> Plateforme de Gestion SaaS
+        </span>
+        <h1 class="display-4 fw-bold mb-3" style="line-height: 1.15;">
+            Gérez vos <span style="color: var(--primary-color);">uniformes scolaires</span> comme un pro.
+        </h1>
+        <p class="lead text-muted mb-4" style="font-size: 1.15rem;">
+            SchoolUniforms est une plateforme moderne pour suivre les stocks, organiser les catégories, 
+            gérer les fournisseurs et visualiser l'état de votre inventaire en temps réel.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                    <i class="fas fa-chart-pie me-2"></i>Accéder au Dashboard
+                </a>
+                <a href="{% url 'uniform_list' %}" class="btn btn-outline-primary btn-lg rounded-pill px-5 py-3">
+                    <i class="fas fa-tshirt me-2"></i>Voir les Uniformes
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                    <i class="fas fa-sign-in-alt me-2"></i>Se Connecter
+                </a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-primary btn-lg rounded-pill px-5 py-3">
+                    <i class="fas fa-user-plus me-2"></i>Créer un Compte
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6 text-center">
+        <img src="{% static 'img/hero.png' %}" alt="Uniformes scolaires" 
+             class="img-fluid rounded-4 shadow-lg" style="max-height: 450px; object-fit: cover;">
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row g-4 py-5">
+    <div class="col-12 text-center mb-3">
+        <h2 class="fw-bold">Fonctionnalités Clés</h2>
+        <p class="text-muted">Tout ce dont vous avez besoin pour gérer efficacement vos uniformes.</p>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4 text-center">
+            <div class="stat-icon bg-indigo-light mx-auto mb-3">
+                <i class="fas fa-boxes-stacked"></i>
+            </div>
+            <h5 class="fw-bold">Gestion des Stocks</h5>
+            <p class="text-muted small">Suivez les quantités en temps réel avec des alertes automatiques pour les ruptures et stocks faibles.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4 text-center">
+            <div class="stat-icon bg-sky-light mx-auto mb-3">
+                <i class="fas fa-search"></i>
+            </div>
+            <h5 class="fw-bold">Recherche & Filtres</h5>
+            <p class="text-muted small">Trouvez instantanément n'importe quel uniforme grâce aux filtres par catégorie, taille et couleur.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4 text-center">
+            <div class="stat-icon bg-amber-light mx-auto mb-3">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h5 class="fw-bold">Dashboard SaaS</h5>
+            <p class="text-muted small">Un tableau de bord professionnel avec statistiques, alertes et vue d'ensemble complète.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
