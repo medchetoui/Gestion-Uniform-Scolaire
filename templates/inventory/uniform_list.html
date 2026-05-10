@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Uniformes - SchoolUniforms{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Stock des Uniformes</h2>
+        <p class="text-muted">Gérez et recherchez vos uniformes ici.</p>
+    </div>
+    <div>
+        <a href="{% url 'uniform_export_csv' %}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-file-csv me-2"></i>Exporter CSV
+        </a>
+        <a href="{% url 'uniform_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Ajouter un Uniforme
+        </a>
+    </div>
+</div>
+
+<!-- Barre de Recherche et Filtres -->
+<div class="card border-0 mb-4 shadow-sm">
+    <div class="card-body p-4">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+                    <input type="text" name="q" class="form-control border-start-0" placeholder="Rechercher par type ou couleur..." value="{{ request.GET.q }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="categorie" class="form-select">
+                    <option value="">Toutes les catégories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if request.GET.categorie == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.libelle }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="taille" class="form-control" placeholder="Taille (S, M...)" value="{{ request.GET.taille }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100">Filtrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des Uniformes -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Type</th>
+                        <th>Catégorie / Niveau</th>
+                        <th>Taille</th>
+                        <th>Couleur</th>
+                        <th>Quantité</th>
+                        <th>Fournisseur</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in uniformes %}
+                    <tr>
+                        <td class="ps-4">
+                            <span class="fw-bold">{{ item.type_tenue }}</span>
+                        </td>
+                        <td>
+                            <span class="text-dark">{{ item.categorie.libelle }}</span><br>
+                            <small class="badge bg-secondary opacity-75">{{ item.categorie.get_niveau_scolaire_display }}</small>
+                        </td>
+                        <td>{{ item.taille }}</td>
+                        <td>
+                            <!-- Utilisation d'une variable CSS pour éviter les erreurs de linter de l'éditeur -->
+                            <span class="d-inline-block rounded-circle me-1" 
+                                  style="width: 12px; height: 12px; border: 1px solid #ddd; background-color: var(--color); --color: {{ item.couleur|lower|default:'transparent' }};">
+                            </span>
+                            {{ item.couleur }}
+                        </td>
+                        <td>
+                            {% if item.est_rupture %}
+                                <span class="badge bg-danger badge-stock">Rupture (0)</span>
+                            {% elif item.est_stock_faible %}
+                                <span class="badge bg-warning text-dark badge-stock">Faible ({{ item.quantite }})</span>
+                            {% else %}
+                                <span class="badge bg-success badge-stock">En stock ({{ item.quantite }})</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.fournisseur|default:"-" }}</td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'uniform_update' item.pk %}" class="btn btn-sm btn-light text-primary me-2" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'uniform_delete' item.pk %}" class="btn btn-sm btn-light text-danger" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-search-minus fs-1 mb-3 d-block"></i>
+                                Aucun uniforme trouvé.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Précédent</a></li>
+        {% endif %}
+        
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+        
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Suivant</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

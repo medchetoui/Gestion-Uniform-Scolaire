@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Connexion - SchoolUniforms{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5">
+        <div class="card border-0 shadow-lg p-3">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="stat-icon bg-indigo-light mx-auto mb-3">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h2 class="fw-bold">Connexion</h2>
+                    <p class="text-muted">Accédez à la gestion des stocks</p>
+                </div>
+                
+                {% if form.errors %}
+                <div class="alert alert-danger rounded-3">
+                    Identifiants incorrects. Veuillez réessayer.
+                </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill py-2 fw-bold">Se connecter</button>
+                    </div>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <p class="text-muted">Vous n'avez pas de compte ? <a href="{% url 'signup' %}" class="text-primary text-decoration-none fw-bold">Inscrivez-vous</a></p>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-0 text-center pb-4">
+                <small class="text-muted">Système de gestion interne SchoolUniforms</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

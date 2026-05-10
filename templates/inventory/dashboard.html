@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - SchoolUniforms{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="fw-bold mb-0">Tableau de Bord</h2>
+        <p class="text-muted">Vue d'ensemble de l'inventaire des uniformes scolaires.</p>
+    </div>
+</div>
+
+<!-- Statistiques Clés -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card h-100 border-0 p-3">
+            <div class="stat-icon bg-indigo-light">
+                <i class="fas fa-tshirt"></i>
+            </div>
+            <h6 class="text-muted mb-1">Total Types</h6>
+            <h2 class="fw-bold mb-0">{{ total_uniformes }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 p-3">
+            <div class="stat-icon bg-sky-light">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <h6 class="text-muted mb-1">Quantité Totale</h6>
+            <h2 class="fw-bold mb-0">{{ quantite_totale }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 p-3">
+            <div class="stat-icon bg-amber-light">
+                <i class="fas fa-tags"></i>
+            </div>
+            <h6 class="text-muted mb-1">Catégories</h6>
+            <h2 class="fw-bold mb-0">{{ total_categories }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 p-3">
+            <div class="stat-icon bg-rose-light">
+                <i class="fas fa-truck-loading"></i>
+            </div>
+            <h6 class="text-muted mb-1">Fournisseurs</h6>
+            <h2 class="fw-bold mb-0">{{ total_fournisseurs }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Section Alertes Stock Faible -->
+    <div class="col-md-6">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h5 class="fw-bold text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Stock Faible (< 10)</h5>
+            </div>
+            <div class="card-body px-4">
+                {% if stock_faible %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Uniforme</th>
+                                <th>Qté</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in stock_faible %}
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold">{{ item.type_tenue }}</span><br>
+                                    <small class="text-muted">{{ item.taille }} - {{ item.couleur }}</small>
+                                </td>
+                                <td><span class="badge bg-warning text-dark">{{ item.quantite }}</span></td>
+                                <td><a href="{% url 'uniform_update' item.pk %}" class="btn btn-sm btn-outline-primary rounded-pill">Ajuster</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                    <p class="mb-0">Aucun stock faible détecté.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Rupture de Stock -->
+    <div class="col-md-6">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h5 class="fw-bold text-danger"><i class="fas fa-times-circle me-2"></i>Rupture de Stock</h5>
+            </div>
+            <div class="card-body px-4">
+                {% if rupture_stock %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Uniforme</th>
+                                <th>Catégorie</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in rupture_stock %}
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold">{{ item.type_tenue }}</span><br>
+                                    <small class="text-muted">{{ item.taille }} - {{ item.couleur }}</small>
+                                </td>
+                                <td>{{ item.categorie.libelle }}</td>
+                                <td><a href="{% url 'uniform_update' item.pk %}" class="btn btn-sm btn-primary rounded-pill">Réappro</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-smile text-primary fs-1 mb-3"></i>
+                    <p class="mb-0">Aucune rupture de stock.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
